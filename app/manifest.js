@@ -1,0 +1,5 @@
+export default function manifest() {
+  return { name: 'AutoCare Garage Network', short_name: 'AutoCare', start_url: '/app', display: 'standalone',
+    background_color: '#0f3d6e', theme_color: '#0f3d6e',
+    icons: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' }, { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }] };
+}

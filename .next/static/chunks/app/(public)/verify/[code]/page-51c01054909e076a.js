@@ -1,0 +1,1 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[513,8630],{3985:(e,n,s)=>{Promise.resolve().then(s.bind(s,8089))},8089:(e,n,s)=>{"use strict";s.d(n,{default:()=>i});var t=s(5155);function i(e){let{label:n}=e;return(0,t.jsx)("button",{className:"btn sm",onClick:()=>window.print(),children:n})}}},e=>{e.O(0,[8441,1255,7358],()=>e(e.s=3985)),_N_E=e.O()}]);

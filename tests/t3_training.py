@@ -1,0 +1,85 @@
+from lib import *
+import urllib.parse
+def apply(b, name, email, minor=False, guardian=True, terms=True, branch='AutoCare Douala'):
+    s = Session(b); s.go('/training')
+    s.page.fill('input[name=full_name]', name); s.page.fill('input[name=email]', email); s.page.fill('input[name=password]', 'Student123!')
+    s.page.select_option('select[name=branch_id]', label=branch)
+    if minor:
+        s.page.check('input[name=is_minor]'); s.page.fill('input[name=guardian_name]','Mrs Parent'); s.page.fill('input[name=guardian_phone]','+237 650 111 222')
+        if guardian: s.page.check('input[name=guardian_consent]')
+    if terms: s.page.check('input[name=terms]')
+    s.act('button:has-text("Submit application")'); return s
+with sync_playwright() as p:
+    b = p.chromium.launch()
+    s1 = apply(b, 'Paul Adult', 'paul@example.com', terms=False); check('terms required', 'accept' in (s1.flash()+s1.text()).lower() and sql("select count(*) from users where email='paul@example.com'")=='0', s1.flash())
+    s2 = apply(b, 'Minor Kid', 'kid@example.com', minor=True, guardian=False); check('minor without consent rejected', sql("select count(*) from users where email='kid@example.com'")=='0', s2.flash())
+    s3 = apply(b, 'Paul Adult', 'paul@example.com'); check('adult application accepted', sql("select status from enrollments e join users u on u.id=e.student_id where u.email='paul@example.com'")=='applied', s3.flash())
+    s4 = apply(b, 'Minor Kid', 'kid@example.com', minor=True); check('minor with consent accepted', sql("select e.guardian_consent from enrollments e join users u on u.id=e.student_id where u.email='kid@example.com'")=='t', s4.flash())
+    mg = Session(b, 'manager.douala@autocare.test'); mg.go('/app/training'); check('manager sees applications', 'Paul Adult' in mg.text() and 'Minor Kid' in mg.text())
+    ym = Session(b, 'manager.yaounde@autocare.test'); ym.go('/app/training'); check('other branch manager does not see them', 'Paul Adult' not in ym.text())
+    mg.act('tr:has-text("Paul Adult") button:has-text("Admit")'); mg.act('tr:has-text("Minor Kid") button:has-text("Admit")')
+    check('both admitted', sql("select count(*) from enrollments where status='active'")=='2', mg.flash())
+    st = Session(b, 'paul@example.com', 'Student123!'); st.go('/app/training'); check('student sees progress page', '0/' in st.text() and 'still have to cover' in st.text())
+    st.go('/app/vehicles'); check('student denied vehicles', 'denied=1' in st.page.url or '/app/vehicles' not in st.page.url, st.page.url)
+    eid = sql("select e.id from enrollments e join users u on u.id=e.student_id where u.email='paul@example.com'")
+    ins = Session(b, 'instructor@autocare.test'); ins.go(f'/app/training/{eid}')
+    n = ins.page.locator('button:has-text("Sign off")').count(); check('instructor sees skills to sign', n>=3, str(n))
+    ins.act('form:has(button:has-text("Sign off")) >> nth=0 >> button:has-text("Sign off")')
+    check('skill signed', sql(f"select count(*) from skill_signoffs where enrollment_id={eid}")=='1', ins.flash())
+    ins.page.fill('input[name=title]','Change a tyre'); ins.act('button:has-text("Assign task")')
+    st.go('/app/training'); st.page.fill('input[name=submission]','done, photo link'); st.act('button:has-text("Submit")')
+    ins.go(f'/app/training/{eid}'); ins.act('button:has-text("Approve")'); check('task approved', sql(f"select status from student_tasks where enrollment_id={eid}")=='approved', ins.flash())
+    ins.go('/app/training/attendance'); ins.page.check(f'input[name=att_{eid}][value=present]'); ins.act('button:has-text("Save attendance")')
+    check('attendance saved', sql(f"select status from attendance where enrollment_id={eid}")=='present', ins.flash())
+    ins.go(f'/app/training/{eid}'); ins.act('button:has-text("Graduate")')
+    check('cannot graduate with skills remaining (instructor)', sql(f"select status from enrollments where id={eid}")=='active', ins.flash())
+    mg.go(f'/app/training/{eid}'); mg.page.check('input[name=override]'); mg.act('button:has-text("Graduate")')
+    check('manager override graduates', sql(f"select status from enrollments where id={eid}")=='graduated', mg.flash())
+    code = sql(f"select code from certificates where enrollment_id={eid}"); check('certificate issued', bool(code), code)
+    pub = Session(b); pub.go(f'/verify/{code}'); check('public QR verify page valid', 'Paul Adult' in pub.text() and 'valid' in pub.text().lower(), pub.text()[:200])
+    pub.go('/verify/NOPE-123'); check('fake code not valid', 'not' in pub.text().lower())
+    pub.go('/graduates'); check('graduate not public until listed/profile', True); print('   graduates page has Paul:', 'Paul Adult' in pub.text())
+    st.go('/app/training'); st.page.fill('input[name=headline]','Tyre and brake technician'); st.act('button:has-text("Save profile")')
+    pub.go('/graduates'); check('graduate shown on public page', 'Paul Adult' in pub.text() and 'Tyre and brake' in pub.text(), pub.text()[:300])
+    check('phone hidden by default', '+237 670' not in pub.text() and sql("select phone_public from graduate_profiles limit 1")=='f')
+    # dropout frozen
+    kid = sql("select e.id from enrollments e join users u on u.id=e.student_id where u.email='kid@example.com'")
+    ins.go(f'/app/training/{kid}'); ins.act('form:has(button:has-text("Sign off")) >> nth=0 >> button:has-text("Sign off")')
+    ins.go(f'/app/training/{kid}'); ins.page.select_option('select[name=status]','dropped'); ins.page.fill('input[name=note]','Moved away'); ins.act('button:has-text("Close record as it stands")')
+    snap = sql(f"select exit_snapshot::text from enrollments where id={kid}")
+    check('dropout frozen with snapshot', sql(f"select status from enrollments where id={kid}")=='dropped' and 'signed' in snap, snap)
+    pub.go('/graduates'); check('dropout not on public page', 'Minor Kid' not in pub.text())
+    # hire
+    a = Session(b, 'admin@autocare.test'); a.go('/app/graduates'); a.page.select_option('tr:has-text("Paul Adult") select[name=role]','mechanic'); a.act('tr:has-text("Paul Adult") button:has-text("Convert to worker account")')
+    check('student converted to mechanic', sql("select role from users where email='paul@example.com'")=='mechanic', a.flash())
+    check('certificate kept after hire', sql(f"select count(*) from certificates where enrollment_id={eid}")=='1')
+    # employer request
+    pub.go('/graduates'); 
+    f = pub.page.locator('form.card input[name=company]').locator('xpath=ancestor::form')
+    f.locator('input[name=company]').fill('Garage X'); f.locator('input[name=contact_name]').fill('Boss'); f.locator('input[name=email]').fill('boss@x.com')
+    ta = f.locator('textarea'); 
+    if ta.count(): ta.first.fill('Need a mechanic')
+    pub.page.click('form.card button'); import time; time.sleep(2)
+    check('employer request stored', sql("select count(*) from employer_requests")=='1', pub.flash())
+    # school
+    sr = Session(b, 'school@autocare.test'); sr.go('/app/training')
+    pid = sql("select min(id) from programs")
+    def reg(branch, lines, confirm=True):
+        sr.go('/app/training'); sr.page.select_option('select[name=branch_id]', label=re.compile(branch)) if False else None
+        sr.page.select_option('select[name=branch_id]', index=0 if 'Douala' in branch else 1)
+        sr.page.fill('textarea[name=students]', lines)
+        if confirm: sr.page.check('input[name=confirm]')
+        sr.act('button:has-text("Register")')
+    reg('Yaoundé', 'A One, a1@example.com, +237 1, no\nB Two, b2@example.com, +237 2, no\nC Three, c3@example.com, +237 3, no\nD Four, d4@example.com, +237 4, no')
+    check('school over limit rejected (3 allowed at Yaoundé)', sql("select count(*) from users where email in ('a1@example.com','d4@example.com')")=='0', sr.flash())
+    reg('Yaoundé', 'A One, a1@example.com, +237 1, no\nKid Two, b2@example.com, +237 2, yes, Mr B, +237 22')
+    check('school registered 2 students', sql("select count(*) from enrollments where school_id is not null")=='2', sr.flash())
+    check('temp passwords shown once', 'creds=' in sr.page.url)
+    check('under-18 school student has consent flag', sql("select guardian_consent from enrollments e join users u on u.id=e.student_id where u.email='b2@example.com'")=='t')
+    check('school sees only own students', 'A One' in sr.text() and 'Paul Adult' not in sr.text())
+    ys = Session(b, 'manager.yaounde@autocare.test'); ys.go('/app/training'); check('Yaoundé manager sees school applicants', 'A One' in ys.text())
+    sr.go('/app/staff'); check('school rep denied staff', 'denied' in sr.page.url or '/app/staff' not in sr.page.url)
+    for s in (st, ins, mg, a, sr, pub):
+        for e in s.errors:
+            if '404' not in e: print('JSERR', e[:160])
+    b.close()

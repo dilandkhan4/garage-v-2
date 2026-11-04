@@ -1,0 +1,326 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/app/invoices/[id]",
+      "regex": "^/app/invoices/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/app/invoices/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/app/jobs/[id]",
+      "regex": "^/app/jobs/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/app/jobs/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/app/orders/[id]",
+      "regex": "^/app/orders/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/app/orders/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/app/receipts/[no]",
+      "regex": "^/app/receipts/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPno": "nxtPno"
+      },
+      "namedRegex": "^/app/receipts/(?<nxtPno>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/app/training/[id]",
+      "regex": "^/app/training/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/app/training/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/app/vehicles/[id]",
+      "regex": "^/app/vehicles/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/app/vehicles/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/verify/[code]",
+      "regex": "^/verify/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPcode": "nxtPcode"
+      },
+      "namedRegex": "^/verify/(?<nxtPcode>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/app",
+      "regex": "^/app(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app(?:/)?$"
+    },
+    {
+      "page": "/app/appointments",
+      "regex": "^/app/appointments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/appointments(?:/)?$"
+    },
+    {
+      "page": "/app/approvals",
+      "regex": "^/app/approvals(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/approvals(?:/)?$"
+    },
+    {
+      "page": "/app/audit",
+      "regex": "^/app/audit(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/audit(?:/)?$"
+    },
+    {
+      "page": "/app/branches",
+      "regex": "^/app/branches(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/branches(?:/)?$"
+    },
+    {
+      "page": "/app/chat",
+      "regex": "^/app/chat(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/chat(?:/)?$"
+    },
+    {
+      "page": "/app/clients",
+      "regex": "^/app/clients(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/clients(?:/)?$"
+    },
+    {
+      "page": "/app/graduates",
+      "regex": "^/app/graduates(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/graduates(?:/)?$"
+    },
+    {
+      "page": "/app/inventory",
+      "regex": "^/app/inventory(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/inventory(?:/)?$"
+    },
+    {
+      "page": "/app/invoices",
+      "regex": "^/app/invoices(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/invoices(?:/)?$"
+    },
+    {
+      "page": "/app/jobs",
+      "regex": "^/app/jobs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/jobs(?:/)?$"
+    },
+    {
+      "page": "/app/jobs/new",
+      "regex": "^/app/jobs/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/jobs/new(?:/)?$"
+    },
+    {
+      "page": "/app/notifications",
+      "regex": "^/app/notifications(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/notifications(?:/)?$"
+    },
+    {
+      "page": "/app/orders",
+      "regex": "^/app/orders(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/orders(?:/)?$"
+    },
+    {
+      "page": "/app/orders/new",
+      "regex": "^/app/orders/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/orders/new(?:/)?$"
+    },
+    {
+      "page": "/app/purchasing",
+      "regex": "^/app/purchasing(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/purchasing(?:/)?$"
+    },
+    {
+      "page": "/app/reports",
+      "regex": "^/app/reports(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/reports(?:/)?$"
+    },
+    {
+      "page": "/app/schools",
+      "regex": "^/app/schools(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/schools(?:/)?$"
+    },
+    {
+      "page": "/app/settings",
+      "regex": "^/app/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/settings(?:/)?$"
+    },
+    {
+      "page": "/app/settings/intervals",
+      "regex": "^/app/settings/intervals(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/settings/intervals(?:/)?$"
+    },
+    {
+      "page": "/app/settings/parts",
+      "regex": "^/app/settings/parts(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/settings/parts(?:/)?$"
+    },
+    {
+      "page": "/app/staff",
+      "regex": "^/app/staff(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/staff(?:/)?$"
+    },
+    {
+      "page": "/app/training",
+      "regex": "^/app/training(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/training(?:/)?$"
+    },
+    {
+      "page": "/app/training/attendance",
+      "regex": "^/app/training/attendance(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/training/attendance(?:/)?$"
+    },
+    {
+      "page": "/app/training/programs",
+      "regex": "^/app/training/programs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/training/programs(?:/)?$"
+    },
+    {
+      "page": "/app/transfers",
+      "regex": "^/app/transfers(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/transfers(?:/)?$"
+    },
+    {
+      "page": "/app/vehicles",
+      "regex": "^/app/vehicles(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/vehicles(?:/)?$"
+    },
+    {
+      "page": "/app/vehicles/new",
+      "regex": "^/app/vehicles/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/app/vehicles/new(?:/)?$"
+    },
+    {
+      "page": "/branches",
+      "regex": "^/branches(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/branches(?:/)?$"
+    },
+    {
+      "page": "/graduates",
+      "regex": "^/graduates(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/graduates(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/manifest.webmanifest",
+      "regex": "^/manifest\\.webmanifest(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/manifest\\.webmanifest(?:/)?$"
+    },
+    {
+      "page": "/register",
+      "regex": "^/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/register(?:/)?$"
+    },
+    {
+      "page": "/services",
+      "regex": "^/services(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/services(?:/)?$"
+    },
+    {
+      "page": "/shop",
+      "regex": "^/shop(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/shop(?:/)?$"
+    },
+    {
+      "page": "/training",
+      "regex": "^/training(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/training(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments"
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}
